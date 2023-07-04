@@ -1,5 +1,6 @@
 import { gql, GraphQLClient } from "graphql-request";
 import graphql from "graphql";
+import { Product } from "@shopify/hydrogen-react/storefront-api-types";
 const domain = process.env.SHOPIFY_STORE_DOMAIN ?? "";
 const storefrontAccessToken = process.env.SHOPIFY_STOREFRONT_ACCESSTOKEN;
 
@@ -37,6 +38,13 @@ export async function getProductsInCollection() {
             node {
               id
               title
+              handle
+              priceRange {
+                minVariantPrice {
+                  amount
+                  currencyCode
+                }
+              }
               images(first: 5) {
                 edges {
                   node {
@@ -45,7 +53,6 @@ export async function getProductsInCollection() {
                   }
                 }
               }
-              handle
             }
           }
         }
@@ -54,25 +61,78 @@ export async function getProductsInCollection() {
   `;
 
   const data = await shopifyAPI(query);
-  return data
+  return data;
+}
+
+export async function getAllProducts() {
+  type Products = {
+    products: {
+      edges: Partial<Product[]>;
+    };
+  };
+  const query = gql`
+    {
+      products(first: 250) {
+        edges {
+          node {
+            id
+            handle
+          }
+        }
+      }
+    }
+  `;
+
+  const response: Products = await shopifyAPI(query);
+  const slugs = response.products.edges ? response.products.edges : [];
+  return slugs;
 }
 
 export const getProduct = async (id: string) => {
   const query = gql`
-    query getProduct($id: ID!) {
-      product(id: $id) {
+    {
+      product(handle: "${id}") {
         id
-        handle
         title
+        handle
         description
+        options {
+          name
+          values
+          id
+        }
+        variants(first: 25) {
+          edges {
+            node {
+              selectedOptions {
+                name
+                value
+              }
+              title
+              id
+              price {
+                amount
+              }
+              image {
+                url
+                altText
+              }
+            }
+          }
+        }
+        images(first: 5) {
+          edges {
+            node {
+              url
+              altText
+            }
+          }
+        }
       }
     }
   `;
-  console.log({ query });
-  const data = await graphQLClient.request(query).then((res) => {
-    return res;
-  });
 
-  return data;
+  const product: Partial<Product> = await shopifyAPI(query);
 
+  return product ?? [];
 };
