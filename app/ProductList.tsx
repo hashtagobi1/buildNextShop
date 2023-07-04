@@ -1,10 +1,8 @@
-import type {
-  Product,
-} from '@shopify/hydrogen-react/storefront-api-types';
+import type { Product, ProductEdge } from "@shopify/hydrogen-react/storefront-api-types";
 import ProductCard from "./ProductCard";
 
 type Props = {
-  products: Partial<Product>[];
+  products?: Partial<ProductEdge>[];
 };
 const ProductList = ({ products }: Props) => {
   return (
@@ -15,9 +13,11 @@ const ProductList = ({ products }: Props) => {
           className="grid grid-cols-1 gap-y-10 gap-x-6 
         sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8"
         >
-          {products.map((product:any, i: number) => (
-            <ProductCard product={product} key={product.node.id} />
-          ))}
+          {products
+            ? products.map((product: any, i: number) => (
+                <ProductCard product={product} key={product.node.id} />
+              ))
+            : null}
         </div>
       </div>
     </div>

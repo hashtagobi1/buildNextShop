@@ -1,6 +1,10 @@
 import { gql, GraphQLClient } from "graphql-request";
 import graphql from "graphql";
-import { Product } from "@shopify/hydrogen-react/storefront-api-types";
+import {
+  Product,
+  Collection,
+  ProductEdge,
+} from "@shopify/hydrogen-react/storefront-api-types";
 const domain = process.env.SHOPIFY_STORE_DOMAIN ?? "";
 const storefrontAccessToken = process.env.SHOPIFY_STOREFRONT_ACCESSTOKEN;
 
@@ -29,6 +33,10 @@ const shopifyAPI = async (query: string, variables?: any) => {
 };
 
 export async function getProductsInCollection() {
+  type CollectionType = {
+    collection: Partial<Collection>;
+  };
+
   const query = gql`
     {
       collection(handle: "glisten-edition-✨") {
@@ -60,15 +68,13 @@ export async function getProductsInCollection() {
     }
   `;
 
-  const data = await shopifyAPI(query);
-  return data;
+  const data: CollectionType = (await shopifyAPI(query)) as CollectionType;
+  return data.collection.products?.edges;
 }
 
 export async function getAllProducts() {
   type Products = {
-    products: {
-      edges: Partial<Product[]>;
-    };
+    products: Partial<ProductEdge>[];
   };
   const query = gql`
     {
@@ -83,8 +89,8 @@ export async function getAllProducts() {
     }
   `;
 
-  const response: Products = await shopifyAPI(query);
-  const slugs = response.products.edges ? response.products.edges : [];
+  const response: Products = (await shopifyAPI(query)) as Products;
+  const slugs = response.products ? response.products : [];
   return slugs;
 }
 
@@ -132,7 +138,9 @@ export const getProduct = async (id: string) => {
     }
   `;
 
-  const product: Partial<Product> = await shopifyAPI(query);
+  const product: Partial<ProductEdge> = (await shopifyAPI(
+    query
+  )) as Partial<ProductEdge>;
 
   return product ?? [];
 };

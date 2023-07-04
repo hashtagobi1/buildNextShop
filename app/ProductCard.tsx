@@ -1,19 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { formatter } from "./utils/helpers";
-import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
+import type {
+  Product,
+  ProductEdge,
+} from "@shopify/hydrogen-react/storefront-api-types";
 type Props = {
-  product: {
-    node: Partial<Product>;
-  };
+  product: Partial<ProductEdge>;
 };
 
 export const ProductCard = ({ product }: Props) => {
-  const { handle, title } = product.node;
-  const altText = product.node.images?.edges[0]?.node.altText;
-  const url = product.node.images?.edges[0]?.node.url;
-  const amount = product?.node?.priceRange?.minVariantPrice.amount;
-  const currencyCode = product?.node?.priceRange?.minVariantPrice.currencyCode;
+  const { handle, title } = { ...product.node };
+  const { altText, url } = { ...product?.node?.images.edges[0].node };
+  const { amount } = {
+    ...product?.node?.priceRange?.minVariantPrice,
+  };
 
   return (
     <Link className="group" href={`/products/${handle}`}>

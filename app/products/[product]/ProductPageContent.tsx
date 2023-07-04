@@ -1,15 +1,16 @@
-import { Product } from "@shopify/hydrogen-react/storefront-api-types";
+import {
+  Product,
+  ProductEdge,
+} from "@shopify/hydrogen-react/storefront-api-types";
 import React, { FC } from "react";
 
 type Props = {
-  product: {
-    product: Partial<Product>;
-  };
+  product: Partial<ProductEdge>;
 };
 
 const ProductPageContent: FC<Props> = ({ product }) => {
   console.log(product);
-  return <div>{product.product.title}</div>;
+  return <div>{product.node?.title}</div>;
 };
 
 export default ProductPageContent;
