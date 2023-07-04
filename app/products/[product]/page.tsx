@@ -7,7 +7,7 @@ export async function generateStaticParams() {
 
   return products.map((product) => {
     // console.log(product?.handle);
-    handle: product?.handle;
+    handle: product?.node?.handle;
   });
 }
 
