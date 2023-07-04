@@ -74,7 +74,9 @@ export async function getProductsInCollection() {
 
 export async function getAllProducts() {
   type Products = {
-    products: Partial<ProductEdge>[];
+    products: {
+      edges: Partial<Product>[];
+    };
   };
   const query = gql`
     {
@@ -89,12 +91,16 @@ export async function getAllProducts() {
     }
   `;
 
-  const response: Products = (await shopifyAPI(query)) as Products;
-  const slugs = response.products ? response.products : [];
-  return slugs;
+  const slugs: Products = (await shopifyAPI(query)) as Products;
+  return slugs.products.edges;
 }
 
 export const getProduct = async (id: string) => {
+  type ProductType = {
+    product: {
+      product: Partial<Product>;
+    };
+  };
   const query = gql`
     {
       product(handle: "${id}") {
@@ -138,9 +144,8 @@ export const getProduct = async (id: string) => {
     }
   `;
 
-  const product: Partial<ProductEdge> = (await shopifyAPI(
-    query
-  )) as Partial<ProductEdge>;
+  const product: ProductType = (await shopifyAPI(query)) as ProductType;
+  console.log({ product });
 
-  return product ?? [];
+  return product.product ?? [];
 };

@@ -19,9 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Nav />
-        <div className="flex flex-col justify-between min-h-screen">
-          {children}
-        </div>
+        {/* <div className="flex flex-col justify-between min-h-screen"> */}
+        {children}
+        {/* </div> */}
       </body>
       <Footer />
     </html>
