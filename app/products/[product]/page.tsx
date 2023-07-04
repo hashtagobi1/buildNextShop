@@ -12,7 +12,7 @@ export async function generateStaticParams() {
 const ProductPage = async ({ params }: any) => {
   const product = await getProduct(params.product);
   return (
-    <div>
+    <div className="min-h-screen py-12 sm:pt-20">
       {/* @ts-ignore */}
       <ProductPageContent product={product} />
     </div>
