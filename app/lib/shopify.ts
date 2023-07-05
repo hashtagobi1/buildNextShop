@@ -145,7 +145,6 @@ export const getProduct = async (id: string) => {
   `;
 
   const product: ProductType = (await shopifyAPI(query)) as ProductType;
-  console.log({ product });
 
   return product.product ?? [];
 };

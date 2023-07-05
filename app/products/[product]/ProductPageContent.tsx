@@ -22,7 +22,7 @@ const ProductPageContent: FC<Props> = ({ product }) => {
           />
         </div>
       </div>
-      <ProductForm />
+      <ProductForm product={product} />
     </div>
   );
 };
